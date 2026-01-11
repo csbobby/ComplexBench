@@ -35,7 +35,7 @@ def get_payload(line):
         "max_tokens": 8192,
         "temperature": 0.0,
         "top_p": 0.3,
-        "stream": True,
+        "stream": False,
     }
     return payload
 

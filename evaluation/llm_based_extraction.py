@@ -1,4 +1,5 @@
 import argparse
+import os
 import json
 import time
 import traceback
@@ -41,7 +42,7 @@ def get_payload(line):
         "max_tokens": 8192,
         "temperature": 0.0,
         "top_p": 0.95,
-        "stream": True,
+        "stream": False,
     }
     return payload
 
@@ -51,8 +52,9 @@ def save_jsonl(entry, sava_path):
         f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
 
-def get_answer(input_data: dict, retry=30):
+def get_answer(input_data: dict, retry=3):
     entry, save_path = input_data["data"], input_data["save_path"]
+    payload = None
     try:
         payload = get_payload(entry)
         # chat_completion = openai.ChatCompletion.create(model=payload['model'], temperature=0, messages=payload['messages'])
@@ -73,7 +75,7 @@ def get_answer(input_data: dict, retry=30):
     except Exception as e:
         time.sleep(1.2)
         retry -= 1
-        if retry < 0:
+        if retry <= 0:
             entry["ass"] = "None"
             entry["payload"] = payload
             save_jsonl(entry, save_path)
